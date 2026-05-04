@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Hidden Layer</title>
+  <link rel="icon" type="image/x-icon" href="/static/favicon.ico">
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="bg-gray-900 text-white font-sans">
+
+  <!-- Navbar -->
+  <nav class="flex justify-between items-center p-6 bg-gray-800 shadow-lg">
+    <div class="flex items-center">
+      <img src="/static/LOGO.png" alt="Logo" class="h-8 mr-4">
+      <h1 class="text-2xl font-bold">HIDDEN LAYER</h1>
+    </div>
+    <div class="space-x-6">
+      <a href="#notes" class="hover:text-blue-400">Notes</a>
+      <a href="#projects" class="hover:text-blue-400">Projects</a>
+      <a href="#resources" class="hover:text-blue-400">Resources</a>
+      <a href="#contact" class="hover:text-blue-400">Contact</a>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <section class="text-center py-20">
+    <h2 class="text-4xl font-bold mb-4">Hi, I'm ALIN ANTO</h2>
+    <p class="text-gray-400 text-lg mb-6">Building cool stuff & learning AI/ML</p>
+
+    <!-- Social Links -->
+    <div class="flex justify-center gap-4">
+      <a href="https://t.me/layerzeroplus" target="_blank"
+         class="bg-blue-500 px-4 py-2 rounded-lg hover:bg-blue-600 transition">
+         Telegram
+      </a>
+
+      <a href="https://github.com/alinanto" target="_blank"
+         class="bg-blue-700 px-4 py-2 rounded-lg hover:bg-blue-600 transition">
+         GitHub
+      </a>
+
+      <a href="https://www.linkedin.com/in/alin-anto/" target="_blank"
+         class="bg-blue-700 px-4 py-2 rounded-lg hover:bg-blue-800 transition">
+         LinkedIn
+      </a>
+    </div>
+  </section>
+
+  <!-- Notes -->
+  <section id="notes" class="px-10 py-12 bg-gray-800">
+    <h3 class="text-2xl font-semibold mb-6">Notes</h3>
+
+    <div id="notes-tree" class="space-y-3 max-w-2xl">
+      {% for category, pdfs in notes_tree.items %}
+      <div class="bg-gray-700 p-4 rounded-lg">
+        <div class="font-semibold text-lg text-blue-400 mb-3">{{ category }}</div>
+        <div class="space-y-2 ml-4">
+          {% for pdf in pdfs %}
+          <div>
+            <a href="/static/notes/{{ category }}/{{ pdf }}" download class="text-blue-300 hover:text-blue-200 flex items-center gap-2">
+              <span>📄</span>
+              <span>{{ pdf }}</span>
+            </a>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+      {% if not notes_tree %}
+      <p class="text-gray-400">Add PDF files to notes folders</p>
+      {% endif %}
+    </div>
+  </section>
+
+  <!-- Projects -->
+  <section id="projects" class="px-10 py-16">
+    <h3 class="text-3xl font-semibold mb-8">Projects</h3>
+
+    <div class="bg-gray-800 p-8 rounded-xl text-center">
+      <p class="text-gray-400 text-lg">
+        🚧 Projects are currently being migrated.<br>
+        Please check my GitHub for latest work.
+      </p>
+
+      <a href="https://github.com/alinanto" target="_blank"
+         class="inline-block mt-4 bg-gray-700 px-5 py-2 rounded-lg hover:bg-gray-600 transition">
+         View GitHub
+      </a>
+    </div>
+  </section>
+
+  <!-- Resources -->
+  <section id="resources" class="px-10 py-16 bg-gray-800">
+    <h3 class="text-3xl font-semibold mb-8">Resources</h3>
+
+    <ul class="space-y-4">
+      <li>
+        <a href="static/GATE_PREP.pdf" target="_blank"
+           class="inline-block bg-blue-500 px-4 py-2 rounded-lg hover:bg-blue-600 transition">
+           📄 GATE Preparation Guide
+        </a>
+      </li>
+      <li>
+        <a href="https://www.linkedin.com/posts/deepak-poonia15783_gate-exam-preparation-guide-all-in-one-ugcPost-7449036104793522176-4gzi?utm_source=share&utm_medium=member_desktop&rcm=ACoAACab2CMBL9xpKDasXDxIvzM4YH-UyJfj-VY" target="_blank"
+           class="inline-block bg-blue-500 px-4 py-2 rounded-lg hover:bg-blue-600 transition">
+           📄 GATE Guidance - Credits: Sujal Agrawal (AIR 1202)
+        </a>
+      </li>
+    </ul>
+  </section>
+
+  <!-- Contact -->
+  <section id="contact" class="px-10 py-16">
+    <h3 class="text-3xl font-semibold mb-6">Contact</h3>
+
+    <p class="text-gray-400 mb-8">
+      Please contact me if you want to discuss something or collaborate on a project.
+    </p>
+
+    <div class="grid md:grid-cols-2 gap-10">
+
+      <!-- LEFT: Existing Contact Info -->
+      <div>
+        <p class="mb-2">Email: 
+          <a href="mailto:alinanto5@gmail.com" class="text-blue-400 hover:underline">
+            alinanto5@gmail.com
+          </a>
+        </p>
+
+        <p>
+          Telegram: 
+          <a href="https://t.me/layerzeroplus" target="_blank"
+            class="text-blue-400 hover:underline">
+            @layerzeroplus
+          </a>
+        </p>
+
+        <p>
+          Github: 
+          <a href="https://github.com/alinanto" target="_blank"
+            class="text-blue-400 hover:underline">
+            alinanto
+          </a>
+        </p>
+
+        <p>
+          LinkedIn:
+          <a href="https://www.linkedin.com/in/alin-anto/" target="_blank"
+            class="text-blue-400 hover:underline">
+            alinanto
+          </a>
+        </p>
+      </div>
+
+      <!-- RIGHT: Contact Form -->
+      <div class="bg-gray-800 p-6 rounded-xl shadow-lg">
+        <form method="POST">
+          {% csrf_token %}
+
+          <input type="text" name="name" placeholder="Your Name" maxlength="100"
+            class="w-full p-3 mb-4 rounded-lg bg-gray-700 text-white focus:outline-none">
+
+          <input type="email" name="email" placeholder="Your Email" maxlength="254"
+            class="w-full p-3 mb-4 rounded-lg bg-gray-700 text-white focus:outline-none">
+
+          <textarea name="message" rows="4" placeholder="Your Message" maxlength="2000"
+            class="w-full p-3 mb-4 rounded-lg bg-gray-700 text-white focus:outline-none"></textarea>
+          
+
+          {% if success and request.method == "POST" %}
+          <p class="text-green-400 mb-4">Message sent successfully!</p>
+          {% elif request.method == "POST" %}
+          <p class="text-red-400 mb-4">Please fill in all fields correctly.</p>
+          {% endif %}
+
+          <button type="submit"
+            class="w-full bg-blue-500 py-3 rounded-lg hover:bg-blue-600 transition">
+            Send Message
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Footer -->
+<footer class="text-center p-6 bg-gray-800 mt-10">
+  <div class="text-gray-500 flex justify-center items-center gap-3">
+    <span>© 2026 Alin Anto</span>
+    <span>Visitors: {{ visit_count }}</span>
+  </div>
+</footer>
+
+</body>
+</html>
