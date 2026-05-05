@@ -1,9 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 import ipaddress
 import os
 from django.conf import settings
-from .models import Contact, Visit, Contact
+from .models import Contact, Visit, Contact, Project
 import re
+from martor.utils import markdownify
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR', '')
@@ -77,10 +78,22 @@ def render_fn(request):
 
     visit_count = Visit.objects.count()
     notes_tree = get_notes_tree()
+    projects = Project.objects.all()
 
     return render(request, 'index.html', {
         'notes_tree': notes_tree,
         'visit_count': visit_count,
         'success': success,
-        'error': error
+        'error': error,
+        'projects': projects,
+    })
+
+def project_detail(request, slug):
+    project = get_object_or_404(Project, slug=slug)
+
+    rendered_markdown = markdownify(project.markdown_content)
+
+    return render(request, 'project_detail.html', {
+        'project': project,
+        'rendered_markdown': rendered_markdown,
     })

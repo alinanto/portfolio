@@ -1,1 +1,5 @@
 django
+martor
+pygments
+markdown
+bleach
