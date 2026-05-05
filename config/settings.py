@@ -23,12 +23,11 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-0odjj9e^_=sc^6@3*_ve=u1hb0w0^3stf)#9+nv26dzgv2j^%&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = [
     "hiddenlayer.ddns.net",
     "www.hiddenlayer.ddns.net",
-    "localhost",
 ]
 
 
