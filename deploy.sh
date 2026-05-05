@@ -1,5 +1,3 @@
-
-
 #!/bin/bash
 
 # Pre-deployment checks and setup
@@ -19,10 +17,6 @@ if grep -q "DEBUG = True" config/settings.py; then
     echo "Setting DEBUG = False"
     sed -i 's/DEBUG = True/DEBUG = False/' config/settings.py
 fi
-
-if grep -q '"localhost"' config/settings.py; then
-    echo "Removing localhost from ALLOWED_HOSTS"
-    sed -i '/"localhost"/d' config/settings.py
 fi
 
 # Run Django checks

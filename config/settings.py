@@ -23,13 +23,17 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-0odjj9e^_=sc^6@3*_ve=u1hb0w0^3stf)#9+nv26dzgv2j^%&'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = [
     "hiddenlayer.ddns.net",
     "www.hiddenlayer.ddns.net",
 ]
 
+if DEBUG:
+    ALLOWED_HOSTS += [
+        "localhost",
+        "127.0.0.1", ]
 
 # Application definition
 
@@ -121,7 +125,12 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR / 'static'
+
+if DEBUG:
+    STATICFILES_DIRS = [BASE_DIR / 'static']
+    STATIC_ROOT = BASE_DIR / 'staticFiles'
+else:
+    STATIC_ROOT = BASE_DIR / 'static'
 
 # Martor configuration
 
