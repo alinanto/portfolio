@@ -17,7 +17,6 @@ if grep -q "DEBUG = True" config/settings.py; then
     echo "Setting DEBUG = False"
     sed -i 's/DEBUG = True/DEBUG = False/' config/settings.py
 fi
-fi
 
 # Run Django checks
 echo "Running Django system checks..."
