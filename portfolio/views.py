@@ -5,6 +5,11 @@ from django.conf import settings
 from .models import Contact, Visit, Contact, Project
 import re
 from martor.utils import markdownify
+from django.http import FileResponse
+
+def favicon(request):
+    filepath = os.path.join(settings.BASE_DIR, 'static', 'favicon.ico')
+    return FileResponse(open(filepath, 'rb'))
 
 def get_client_ip(request):
     x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR', '')

@@ -8,8 +8,8 @@ source venv/bin/activate
 
 # Make and run migrations locally
 echo "Making and running migrations locally..."
-python manage.py makemigrations
-python manage.py migrate
+python3 manage.py makemigrations
+python3 manage.py migrate
 
 # Check and update settings.py for production
 echo "Checking settings.py..."
@@ -20,7 +20,7 @@ fi
 
 # Run Django checks
 echo "Running Django system checks..."
-python manage.py check
+python3 manage.py check
 
 # Deactivate venv
 deactivate
@@ -39,8 +39,8 @@ ssh CloudGenie << 'EOF'
   cd /var/www/portfolio
   source venv/bin/activate
   pip install -r requirements.txt
-  python manage.py migrate --noinput
-  python manage.py collectstatic --noinput
+  python3 manage.py migrate --noinput
+  python3 manage.py collectstatic --noinput
   sudo chown -R ec2-user:apache /var/www/portfolio/
   sudo chmod -R 775 /var/www/portfolio
   sudo systemctl restart httpd
