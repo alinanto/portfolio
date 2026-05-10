@@ -3,3 +3,4 @@ martor
 pygments
 markdown
 bleach
+python-decouple

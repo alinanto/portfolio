@@ -1,11 +1,16 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+from django.conf import settings
+from django.template.loader import render_to_string
+from django.core.mail import EmailMultiAlternatives
+from django.http import FileResponse
+from django.urls import reverse
+from django.contrib import messages
+
+import re
 import ipaddress
 import os
-from django.conf import settings
-from .models import Contact, Visit, Contact, Project
-import re
 from martor.utils import markdownify
-from django.http import FileResponse
+from .models import Contact, Visit, Contact, Project
 
 def favicon(request):
     filepath = os.path.join(settings.BASE_DIR, 'static', 'favicon.ico')
@@ -70,13 +75,43 @@ def render_fn(request):
                     message=message
                 )
 
-                # Send Email (optional, can be commented out if not configured)
-                
-                success = True
-                print("New Contact Message:")
-                print(name, email, message)
+                full_message = f"""
+                                Name: {name}
+                                Email: {email}
+                                Message: {message}
+
+                                Thanks and Regards,
+
+                                Hidden Layer subsystem
+                                hiddenlayer.ddns.net
+                                """
+                mail = EmailMultiAlternatives(
+                    subject=f"New Contact Message from {name}",
+                    body=full_message,
+                    from_email=settings.DEFAULT_FROM_EMAIL,
+                    to=[settings.DEFAULT_RECIPIENT]+[email],
+                )
+
+                html_content = render_to_string(
+                    'email/contact.html', {
+                        'name': name,
+                        'email': email,
+                        'message': message,
+                    }  
+                )
+                mail.attach_alternative(html_content, "text/html")
+                mail.send()
+
+                messages.success(request, "Your message has been sent successfully!")
+
+                if settings.DEBUG:
+                    print("New Contact Message:")
+                    print(name, email, message)
+
+                return redirect(reverse('home') + '#contact')
             else:
-                error = True
+                messages.error(request, "Please enter a valid email address.")
+                return redirect(reverse('home') + '#contact')
 
 
     # For now just printing (later we store/send email)
