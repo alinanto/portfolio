@@ -32,6 +32,9 @@ rsync -rv --exclude 'venv/' \
           --exclude '.env' \
           --exclude '.git/' \
           --exclude 'db.sqlite3' \
+          --exclude 'staticFiles/' \
+          --exclude 'media/' \
+          --exclude 'static/' \
         /home/alin/projects/portfolio/ CloudGenie:/var/www/portfolio/
 
 # SSH into remote server and run deployment commands

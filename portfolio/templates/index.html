@@ -1,30 +1,9 @@
+{% extends "base.html" %}
+
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Hidden Layer</title>
-  <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
-  <script src="https://cdn.tailwindcss.com"></script>
-</head>
 
-<body class="bg-gray-900 text-white font-sans">
-
-  <!-- Navbar -->
-  <nav class="flex justify-between items-center p-6 bg-gray-800 shadow-lg">
-    <div class="flex items-center">
-      <img src="{% static 'LOGO.png' %}" alt="Logo" class="h-8 mr-4">
-      <h1 class="text-2xl font-bold">HIDDEN LAYER</h1>
-    </div>
-    <div class="space-x-6">
-      <a href="#notes" class="hover:text-blue-400">Notes</a>
-      <a href="#projects" class="hover:text-blue-400">Projects</a>
-      <a href="#resources" class="hover:text-blue-400">Resources</a>
-      <a href="#contact" class="hover:text-blue-400">Contact</a>
-    </div>
-  </nav>
-
+{% block content %}
+  
   <!-- Hero Section -->
   <section class="text-center py-20">
     <h2 class="text-4xl font-bold mb-4">Hi, I'm ALIN ANTO</h2>
@@ -49,8 +28,49 @@
     </div>
   </section>
 
+  <!-- Projects -->
+  <section id="projects" class="px-10 py-16 bg-gray-800">
+    <h3 class="text-3xl font-semibold mb-8">Projects</h3>
+
+    {% if projects %}
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+      {% for project in projects %}
+      <a href="{% url 'project_detail' project.slug %}"
+        class="block bg-gray-800 rounded-2xl p-6 border border-gray-700 hover:border-blue-500 hover:-translate-y-1 transition duration-200 shadow-lg">
+
+        <h4 class="text-2xl font-semibold mb-3 text-white">
+          {{ project.title }}
+        </h4>
+
+        <p class="text-gray-400 mb-5 line-clamp-4">
+          {{ project.short_description }}
+        </p>
+
+        <div class="flex flex-wrap gap-2">
+          {% for tag in project.tag_list %}
+          <span class="bg-gray-700 text-blue-300 px-3 py-1 rounded-full text-sm">
+            {{ tag }}
+          </span>
+          {% endfor %}
+        </div>
+
+      </a>
+      {% endfor %}
+
+    </div>
+
+    {% else %}
+    <div class="bg-gray-800 p-8 rounded-xl text-center">
+      <p class="text-gray-400 text-lg">
+        No projects added yet.
+      </p>
+    </div>
+    {% endif %}
+  </section>
+
   <!-- Notes -->
-  <section id="notes" class="px-10 py-12 bg-gray-800">
+  <section id="notes" class="px-10 py-12">
     <h3 class="text-2xl font-semibold mb-6">Notes</h3>
 
     <div id="notes-tree" class="space-y-3 max-w-2xl">
@@ -74,47 +94,6 @@
       {% endif %}
     </div>
   </section>
-
-  <!-- Projects -->
-<section id="projects" class="px-10 py-16">
-  <h3 class="text-3xl font-semibold mb-8">Projects</h3>
-
-  {% if projects %}
-  <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-
-    {% for project in projects %}
-    <a href="{% url 'project_detail' project.slug %}"
-       class="block bg-gray-800 rounded-2xl p-6 border border-gray-700 hover:border-blue-500 hover:-translate-y-1 transition duration-200 shadow-lg">
-
-      <h4 class="text-2xl font-semibold mb-3 text-white">
-        {{ project.title }}
-      </h4>
-
-      <p class="text-gray-400 mb-5 line-clamp-4">
-        {{ project.short_description }}
-      </p>
-
-      <div class="flex flex-wrap gap-2">
-        {% for tag in project.tag_list %}
-        <span class="bg-gray-700 text-blue-300 px-3 py-1 rounded-full text-sm">
-          {{ tag }}
-        </span>
-        {% endfor %}
-      </div>
-
-    </a>
-    {% endfor %}
-
-  </div>
-
-  {% else %}
-  <div class="bg-gray-800 p-8 rounded-xl text-center">
-    <p class="text-gray-400 text-lg">
-      No projects added yet.
-    </p>
-  </div>
-  {% endif %}
-</section>
 
   <!-- Resources -->
   <section id="resources" class="px-10 py-16 bg-gray-800">
@@ -235,13 +214,4 @@
     </div>
   </section>
 
-  <!-- Footer -->
-<footer class="text-center p-6 bg-gray-800 mt-10">
-  <div class="text-gray-500 flex justify-center items-center gap-3">
-    <span>© 2026 Alin Anto</span>
-    <span>Visitors: {{ visit_count }}</span>
-  </div>
-</footer>
-
-</body>
-</html>
+{% endblock %}

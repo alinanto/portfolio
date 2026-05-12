@@ -1,89 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "base.html" %}
 
-  <title>{{ project.title }} | Hidden Layer</title>
+{% load static %}
 
-  <script src="https://cdn.tailwindcss.com"></script>
+{% block title %}
+  {{ project.title }} - Hidden Layer
+{% endblock %}
 
-    <style>
-        .prose h1,
-        .prose h2,
-        .prose h3,
-        .prose h4 {
-            color: white;
-            margin-top: 2rem;
-            margin-bottom: 1rem;
-            font-weight: bold;
-        }
+{% block content %}
 
-        .prose p,
-        .prose li {
-            color: #d1d5db;
-            line-height: 1.8;
-        }
-
-        .prose a {
-            color: #60a5fa;
-        }
-
-        .prose pre {
-            background: #111827;
-            padding: 1rem;
-            border-radius: 1rem;
-            overflow-x: auto;
-            margin: 1.5rem 0;
-        }
-
-        .prose code {
-            color: #93c5fd;
-        }
-
-        .prose table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 2rem 0;
-        }
-
-        .prose th,
-        .prose td {
-            border: 1px solid #374151;
-            padding: 0.75rem;
-        }
-
-        .prose img {
-            border-radius: 1rem;
-            margin: 2rem auto;
-        }
-    </style>
-
-  <!-- Highlight.js -->
+<!-- Highlight.js -->
   <link rel="stylesheet"
         href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
+
+  <link rel="stylesheet" href="{% static 'github-markdown-dark.css' %}">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
 
   <script>
     hljs.highlightAll();
   </script>
-</head>
-
-{% load static %}
-
-<body class="bg-gray-900 text-white font-sans min-h-screen flex flex-col">
-
-  <!-- Navbar -->
-  <nav class="flex justify-between items-center p-6 bg-gray-800 shadow-lg">
-    <div class="flex items-center">
-      <img src="{% static 'LOGO.png' %}" alt="Logo" class="h-8 mr-4">
-      <a href="/" class="text-2xl font-bold">HIDDEN LAYER</a>
-    </div>
-  </nav>
 
   <!-- Content -->
-  <main class="flex-1 max-w-5xl mx-auto px-6 py-14 w-full">
+  <main class="flex-1 max-w-7xl mx-auto px-6 py-14 w-full">
 
     <div class="mb-10">
       <h1 class="text-5xl font-bold mb-4">
@@ -112,18 +50,11 @@
     </div>
 
     <!-- Markdown Content -->
-    <article class="prose prose-invert prose-lg max-w-none">
+    <article class="markdown-body">
       {{ rendered_markdown|safe }}
     </article>
 
   </main>
+{% endblock %}
 
-  <!-- Footer -->
-  <footer class="text-center p-6 bg-gray-800 mt-10">
-    <div class="text-gray-500">
-      © 2026 Alin Anto
-    </div>
-  </footer>
-
-</body>
-</html>
+  

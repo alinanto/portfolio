@@ -140,7 +140,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 MARTOR_ENABLE_CONFIGS = {
     'emoji': 'twemoji',
-    'imgur': 'false',
+    'imgur': 'true',
+    'server' : 'true',
     'mention': 'false',
     'jquery': 'true',
     'living': 'false',
@@ -148,8 +149,19 @@ MARTOR_ENABLE_CONFIGS = {
     'hljs': 'true',
 }
 
+# To show the toolbar buttons
+MARTOR_TOOLBAR_BUTTONS = [
+    'bold', 'italic', 'horizontal', 'heading', 'pre-code',
+    'blockquote', 'unordered-list', 'ordered-list',
+    'link', 'image-link', 'image-upload', 'emoji',
+    'direct-mention', 'toggle-maximize', 'help'
+]
+
+MARTOR_ENABLE_LABEL = True
+MARTOR_UPLOAD_TYPE = 'server'
 MARTOR_UPLOAD_PATH = 'markdown_uploads/'
 MARTOR_UPLOAD_URL = '/martor/uploader/'
+MAX_IMAGE_UPLOAD_SIZE = 5242880  # 5MB'
 
 #Email configuration
 

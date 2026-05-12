@@ -2,15 +2,69 @@ from django.shortcuts import render, get_object_or_404, redirect
 from django.conf import settings
 from django.template.loader import render_to_string
 from django.core.mail import EmailMultiAlternatives
-from django.http import FileResponse
+from django.http import FileResponse, HttpResponse
 from django.urls import reverse
 from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.utils.translation import gettext_lazy as _
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
+
 
 import re
 import ipaddress
 import os
+import json
+import uuid
+from urllib3 import request
+
+from martor.utils import LazyEncoder
 from martor.utils import markdownify
 from .models import Contact, Visit, Contact, Project
+
+@login_required
+def image_uploader(request):
+    """
+    Makdown image upload for locale storage
+    and represent as json to markdown editor.
+    """
+    if request.method == 'POST' and request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        if 'markdown-image-upload' in request.FILES:
+            image = request.FILES['markdown-image-upload']
+            image_types = [
+                'image/png', 'image/jpg',
+                'image/jpeg', 'image/pjpeg', 'image/gif'
+            ]
+            if image.content_type not in image_types:
+                data = json.dumps({
+                    'status': 405,
+                    'error': _('Bad image format.')
+                }, cls=LazyEncoder)
+                return HttpResponse(
+                    data, content_type='application/json', status=405)
+
+            if image.size > settings.MAX_IMAGE_UPLOAD_SIZE:
+                to_MB = settings.MAX_IMAGE_UPLOAD_SIZE / (1024 * 1024)
+                data = json.dumps({
+                    'status': 405,
+                    'error': _('Maximum image file is %(size)s MB.') % {'size': to_MB}
+                }, cls=LazyEncoder)
+                return HttpResponse(
+                    data, content_type='application/json', status=405)
+
+            img_uuid = "{0}-{1}".format(uuid.uuid4().hex[:10], image.name.replace(' ', '-'))
+            tmp_file = os.path.join(settings.MARTOR_UPLOAD_PATH, img_uuid)
+            def_path = default_storage.save(tmp_file, ContentFile(image.read()))
+            img_url = os.path.join(settings.MEDIA_URL, def_path)
+
+            data = json.dumps({
+                'status': 200,
+                'link': img_url,
+                'name': image.name
+            })
+            return HttpResponse(data, content_type='application/json')
+        return HttpResponse(_('Invalid request!'))
+    return HttpResponse(_('Invalid request!'))
 
 def favicon(request):
     filepath = os.path.join(settings.BASE_DIR, 'static', 'favicon.ico')
@@ -132,8 +186,10 @@ def project_detail(request, slug):
     project = get_object_or_404(Project, slug=slug)
 
     rendered_markdown = markdownify(project.markdown_content)
+    visit_count = Visit.objects.count()
 
     return render(request, 'project_detail.html', {
         'project': project,
         'rendered_markdown': rendered_markdown,
+        'visit_count': visit_count,
     })

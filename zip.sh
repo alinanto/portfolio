@@ -6,5 +6,5 @@ zip -r portfolio.zip . \
   -x "db.sqlite3" \
   -x ".env" \
   -x "media/*" \
-  -x "staticfiles/*" \
+  -x "staticFiles/*" \
   -x "static/*"
