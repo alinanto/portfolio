@@ -39,6 +39,7 @@ local_settings.py
 /static/admin
 /static/notes
 /staticFiles/
+/static/*.jpg
 db.sqlite3
 db.sqlite3-journal
 
