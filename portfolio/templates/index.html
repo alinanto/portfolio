@@ -5,7 +5,7 @@
 {% block content %}
   
   <!-- Hero Section -->
-  <section class="max-w-6xl mx-auto py-20 px-6">
+  <section class="max-w-6xl mx-auto py-S20 px-6">
     <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
       
       <!-- Left Cell: Profile, Bio & Links -->
@@ -88,6 +88,7 @@
       </div>
     </div>
   </section>
+
   <!-- Projects -->
   <section id="projects" class="px-10 py-16 bg-gray-800">
     <h3 class="text-3xl font-semibold mb-8">Projects</h3>
@@ -97,7 +98,7 @@
 
       {% for project in projects %}
       <a href="{% url 'project_detail' project.slug %}"
-        class="block bg-gray-800 rounded-2xl p-6 border border-gray-700 hover:border-blue-500 hover:-translate-y-1 transition duration-200 shadow-lg">
+        class="block bg-gray-900 rounded-2xl p-6 border border-gray-700 hover:border-blue-500 hover:-translate-y-1 transition duration-200 shadow-lg">
 
         <h4 class="text-2xl font-semibold mb-3 text-white">
           {{ project.title }}
@@ -129,50 +130,84 @@
     {% endif %}
   </section>
 
-  <!-- Notes -->
-  <section id="notes" class="px-10 py-12">
-    <h3 class="text-2xl font-semibold mb-6">Notes</h3>
+  <!-- Tools & Demo -->
+  <section id="tools-demo" class="px-10 py-16">
+    <h3 class="text-3xl font-semibold mb-8 text-white">Tools & Demo</h3>
 
-    <div id="notes-tree" class="space-y-3 max-w-2xl">
-      {% for category, pdfs in notes_tree.items %}
-      <div class="bg-gray-700 p-4 rounded-lg">
-        <div class="font-semibold text-lg text-blue-400 mb-3">{{ category }}</div>
-        <div class="space-y-2 ml-4">
-          {% for pdf in pdfs %}
-          <div>
-            <a href="{% static 'notes/' %}{{ category }}/{{ pdf }}" download class="text-blue-300 hover:text-blue-200 flex items-center gap-2">
-              <span>📄</span>
-              <span>{{ pdf }}</span>
-            </a>
-          </div>
-          {% endfor %}
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <a href="{% url 'demo_clt' %}"
+        class="block bg-gray-800 rounded-2xl p-6 border border-gray-700 hover:border-blue-500 hover:-translate-y-1 transition duration-200 shadow-lg">
+
+        <h4 class="text-2xl font-semibold mb-3 text-white">
+          CLT Demo
+        </h4>
+
+        <p class="text-gray-400 mb-5 line-clamp-4">
+          Explore the Central Limit Theorem with an interactive visualization and distribution controls.
+        </p>
+
+        <div class="flex flex-wrap gap-2">
+          <span class="bg-gray-700 text-blue-300 px-3 py-1 rounded-full text-sm">
+            CLT
+          </span>
+          <span class="bg-gray-700 text-blue-300 px-3 py-1 rounded-full text-sm">
+            monte carlo simulation
+          </span>
         </div>
-      </div>
-      {% endfor %}
-      {% if not notes_tree %}
-      <p class="text-gray-400">Add PDF files to notes folders</p>
-      {% endif %}
+
+      </a>
     </div>
   </section>
 
-  <!-- Resources -->
-  <section id="resources" class="px-10 py-16 bg-gray-800">
-    <h3 class="text-3xl font-semibold mb-8">Resources</h3>
+  <!-- Notes and Resources -->
+  <section id="notes-and-resources" class="px-10 py-12 bg-gray-800">
+    <h3 class="text-2xl font-semibold mb-6">Notes and Resources</h3>
 
-    <ul class="space-y-4">
-      <li>
-        <a href="{% static 'GATE_PREP.pdf' %}" target="_blank"
-           class="inline-block bg-blue-500 px-4 py-2 rounded-lg hover:bg-blue-600 transition">
-           📄 GATE Preparation Guide
-        </a>
-      </li>
-      <li>
-        <a href="https://www.linkedin.com/posts/deepak-poonia15783_gate-exam-preparation-guide-all-in-one-ugcPost-7449036104793522176-4gzi?utm_source=share&utm_medium=member_desktop&rcm=ACoAACab2CMBL9xpKDasXDxIvzM4YH-UyJfj-VY" target="_blank"
-           class="inline-block bg-blue-500 px-4 py-2 rounded-lg hover:bg-blue-600 transition">
-           📄 GATE Guidance - Credits: Sujal Agrawal (AIR 1202)
-        </a>
-      </li>
-    </ul>
+    <div class="grid md:grid-cols-2 gap-8">
+      <!-- Left: Notes -->
+      <div>
+        <h4 class="text-xl font-semibold mb-4 text-blue-400">Notes</h4>
+        <div id="notes-tree" class="space-y-3">
+          {% for category, pdfs in notes_tree.items %}
+          <div class="bg-gray-700 p-4 rounded-lg">
+            <div class="font-semibold text-lg text-blue-400 mb-3">{{ category }}</div>
+            <div class="space-y-2 ml-4">
+              {% for pdf in pdfs %}
+              <div>
+                <a href="{% static 'notes/' %}{{ category }}/{{ pdf }}" download class="text-blue-300 hover:text-blue-200 flex items-center gap-2">
+                  <span>📄</span>
+                  <span>{{ pdf }}</span>
+                </a>
+              </div>
+              {% endfor %}
+            </div>
+          </div>
+          {% endfor %}
+          {% if not notes_tree %}
+          <p class="text-gray-400">Add PDF files to notes folders</p>
+          {% endif %}
+        </div>
+      </div>
+
+      <!-- Right: Resources -->
+      <div>
+        <h4 class="text-xl font-semibold mb-4 text-blue-400">Resources</h4>
+        <ul class="space-y-4">
+          <li>
+            <a href="{% static 'GATE_PREP.pdf' %}" target="_blank"
+               class="inline-block bg-blue-500 px-4 py-2 rounded-lg hover:bg-blue-600 transition">
+               📄 GATE Preparation Guide
+            </a>
+          </li>
+          <li>
+            <a href="https://www.linkedin.com/posts/deepak-poonia15783_gate-exam-preparation-guide-all-in-one-ugcPost-7449036104793522176-4gzi?utm_source=share&utm_medium=member_desktop&rcm=ACoAACab2CMBL9xpKDasXDxIvzM4YH-UyJfj-VY" target="_blank"
+               class="inline-block bg-blue-500 px-4 py-2 rounded-lg hover:bg-blue-600 transition">
+               📄 GATE Guidance - Credits: Sujal Agrawal (AIR 1202)
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
   </section>
 
   <!-- Contact -->

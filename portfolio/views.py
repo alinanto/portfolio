@@ -182,6 +182,13 @@ def render_fn(request):
         'projects': projects,
     })
 
+def demo_clt(request):
+    visit_count = Visit.objects.count()
+    return render(request, 'demo-CLT.html', {
+        'visit_count': visit_count,
+    })
+
+
 def project_detail(request, slug):
     project = get_object_or_404(Project, slug=slug)
 

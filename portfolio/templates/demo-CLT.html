@@ -1,0 +1,992 @@
+{% extends "base.html" %}
+
+{% load static %}
+
+{% block title %}
+  CLT Demo - Hidden Layer
+{% endblock %}
+
+{% block content %}
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            overflow-x: hidden;
+        }
+
+        .preset-btn {
+            transition: all 0.2s;
+            background-color: rgb(30 41 59);
+            color: rgb(226 232 240);
+        }
+
+        .preset-btn.active {
+            background-color: rgb(37 99 235);
+            color: white;
+        }
+
+        .stat-card {
+            border: 1px solid rgb(55 65 81);
+            background-color: rgb(15 23 42);
+            padding: 0.75rem;
+        }
+
+        #customEditor {
+            background-color: rgb(30 41 59);
+            color: rgb(226 232 240);
+            border: 1px solid rgb(55 65 81);
+            border-radius: 0.75rem;
+            min-height: 140px;
+            padding: 0.75rem;
+        }
+
+        .vertical-range {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 140px;
+            height: 2rem;
+            transform: rotate(-90deg);
+            transform-origin: center;
+            background: transparent;
+            cursor: pointer;
+        }
+
+        .vertical-range::-webkit-slider-runnable-track {
+            height: 0.4rem;
+            background: rgb(59 130 246);
+            border-radius: 9999px;
+        }
+
+        .vertical-range::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 0.95rem;
+            height: 0.95rem;
+            border-radius: 9999px;
+            background: rgb(241 245 249);
+            border: 2px solid rgb(37 99 235);
+            margin-top: -0.25rem;
+        }
+
+        .vertical-range::-moz-range-track {
+            height: 0.4rem;
+            background: rgb(59 130 246);
+            border-radius: 9999px;
+        }
+
+        .vertical-range::-moz-range-thumb {
+            width: 0.95rem;
+            height: 0.95rem;
+            border-radius: 9999px;
+            background: rgb(241 245 249);
+            border: 2px solid rgb(37 99 235);
+        }
+
+        .custom-editor-row {
+            display: grid;
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+            gap: 0.5rem;
+            align-items: flex-end;
+        }
+
+        .custom-editor-cell {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.75rem;
+            min-height: 180px;
+        }
+
+        .custom-slider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 140px;
+        }
+
+        .custom-editor-label {
+            font-size: 0.85rem;
+            color: rgb(148 163 184);
+        }
+
+        .custom-editor-value {
+            font-weight: 600;
+            color: rgb(203 213 225);
+        }
+    </style>
+
+    <div class="max-w-7xl mx-auto p-4">
+
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-bold">
+                Central Limit Theorem Explorer
+            </h1>
+
+            <p class="text-gray-300 mt-2">
+                Explore how sums of independent random variables converge to a normal distribution.
+            </p>
+        </div>
+
+        <div class="grid lg:grid-cols-3 gap-4">
+
+            <!-- Controls -->
+            <div class="bg-gray-800 rounded-xl shadow-xl shadow-black/20 p-4 border border-gray-700">
+
+                <h2 class="text-lg font-semibold mb-4 text-white">
+                    Dice Controls
+                </h2>
+
+                <!-- Distribution Presets -->
+                <div class="mb-4">
+
+                    <label class="font-semibold block mb-3">
+                        Dice Distribution
+                    </label>
+
+                    <div class="grid grid-cols-2 gap-1">
+
+                        <button
+                            id="uniformBtn"
+                            class="preset-btn active px-2 py-1.5 rounded bg-blue-600 text-white"
+                            onclick="setPreset('uniform')">
+                            Uniform
+                        </button>
+
+                        <button
+                            id="leftBtn"
+                            class="preset-btn px-2 py-1.5 rounded bg-slate-700 text-gray-100"
+                            onclick="setPreset('left')">
+                            Left Skewed
+                        </button>
+
+                        <button
+                            id="rightBtn"
+                            class="preset-btn px-2 py-1.5 rounded bg-slate-700 text-gray-100"
+                            onclick="setPreset('right')">
+                            Right Skewed
+                        </button>
+
+                        <button
+                            id="expBtn"
+                            class="preset-btn px-2 py-1.5 rounded bg-slate-700 text-gray-100"
+                            onclick="setPreset('exp')">
+                            Exponential
+                        </button>
+
+                        <button
+                            id="customBtn"
+                            class="preset-btn col-span-2 px-2 py-1.5 rounded bg-slate-700 text-gray-100"
+                            onclick="setPreset('custom')">
+                            Custom
+                        </button>
+
+                    </div>
+
+                </div>
+
+                <!-- Custom Editor -->
+                <div class="mb-3">
+
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="font-semibold text-white">
+                            Custom Distribution
+                        </span>
+
+                        <span class="text-sm text-gray-400">
+                            Softmax Probabilities
+                        </span>
+                    </div>
+
+                    <div id="customEditor"></div>
+
+                </div>
+
+                <!-- Original Distribution Stats -->
+                <div class="mb-3">
+
+                    <div class="font-semibold mb-2 text-white">
+                        Original Dice Statistics
+                    </div>
+
+                    <div id="distributionStats"
+                        class="grid grid-cols-2 gap-3">
+                    </div>
+
+                </div>
+
+
+            </div>
+
+            <!-- Chart Area -->
+            <div class="lg:col-span-2 bg-gray-800 rounded-xl shadow-xl shadow-black/20 p-3 border border-gray-700">
+
+                <canvas id="histogram"></canvas>
+
+                <div class="mt-5 bg-gray-900 rounded-2xl border border-gray-700 p-3">
+                    <div class="mb-3 text-white font-semibold">Dice Settings</div>
+                    <div class="mb-3">
+                        <label class="font-semibold block mb-1 text-gray-300">Number of Dice Rolls (n)</label>
+                        <input
+                            id="nSlider"
+                            type="range"
+                            min="2"
+                            max="100"
+                            value="20"
+                            class="w-full"
+                        >
+                        <div class="text-right mt-1">
+                            <span id="nValue" class="font-bold text-blue-400 text-lg">20</span>
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="font-semibold block mb-1 text-gray-300">Monte Carlo Runs (k)</label>
+                        <input
+                            id="kSlider"
+                            type="range"
+                            min="1000"
+                            max="10000"
+                            step="500"
+                            value="5000"
+                            class="w-full"
+                        >
+                        <div class="text-right mt-1">
+                            <span id="kValue" class="font-bold text-blue-400 text-lg">5,000</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="font-semibold block mb-1 text-gray-300">Display</label>
+                        <div class="flex gap-1">
+                            <button
+                                id="rawBtn"
+                                class="flex-1 px-2 py-1.5 bg-blue-600 text-white rounded"
+                                onclick="setMode('raw')">
+                                Raw Sum
+                            </button>
+                            <button
+                                id="stdBtn"
+                                class="flex-1 px-2 py-1.5 bg-slate-700 text-gray-100 rounded"
+                                onclick="setMode('standard')">
+                                Standardized
+                            </button>
+                        </div>
+                    </div>
+
+                    <button
+                        id="runSimulation"
+                        class="mt-3 w-full bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition"
+                        onclick="runSimulation()">
+                        Run Simulation
+                    </button>
+
+                    <div class="flex items-center gap-2 mt-4">
+                        <input id="autoRunSimulation" type="checkbox" class="h-4 w-4 rounded border-gray-300 text-blue-600 focus:ring-blue-500">
+                        <label for="autoRunSimulation" class="text-sm text-gray-300">
+                            Auto-run simulation on control change
+                        </label>
+                    </div>
+
+                    <div id="simulationStatus" class="mt-4 text-sm text-gray-400">
+                        Press Run Simulation to generate the graph.
+                    </div>
+                </div>
+
+                <div class="grid md:grid-cols-4 gap-2 mt-4">
+
+                    <div class="stat-card rounded-lg p-3">
+                        <div class="text-xs text-gray-400">
+                            Mean of Sum
+                        </div>
+
+                        <div id="sumMean"
+                            class="text-xl font-bold">
+                        </div>
+                        <div id="sumMeanTheory" class="text-xs text-gray-400 mt-2"></div>
+                    </div>
+
+                    <div class="stat-card rounded-lg p-3">
+                        <div class="text-xs text-gray-400">
+                            Variance of Sum
+                        </div>
+
+                        <div id="sumVar"
+                            class="text-xl font-bold">
+                        </div>
+                        <div id="sumVarTheory" class="text-xs text-gray-400 mt-2"></div>
+                    </div>
+
+                    <div class="stat-card rounded-lg p-3">
+                        <div class="text-xs text-gray-400">
+                            Std Dev of Sum
+                        </div>
+
+                        <div id="sumStd"
+                            class="text-xl font-bold">
+                        </div>
+                        <div id="sumStdTheory" class="text-xs text-gray-400 mt-2"></div>
+                    </div>
+
+                    <div class="stat-card rounded-lg p-3">
+                        <div class="text-xs text-gray-400">
+                            CLT View
+                        </div>
+
+                        <div id="viewText"
+                            class="text-lg font-bold">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="mt-6 text-center text-gray-300">
+
+                    <div id="description">
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+
+    let chart = null;
+    let mode = "raw";
+    let preset = "uniform";
+
+    let logits = [0,0,0,0,0,0];
+
+    const SAMPLE_COUNT = 6000;
+
+    function softmax(values){
+
+        const maxVal = Math.max(...values);
+
+        const exps =
+            values.map(v => Math.exp(v-maxVal));
+
+        const total =
+            exps.reduce((a,b)=>a+b,0);
+
+        return exps.map(v=>v/total);
+    }
+
+    function getProbabilities(){
+        return softmax(logits);
+    }
+
+    function setActiveButton(id){
+
+        document
+            .querySelectorAll(".preset-btn")
+            .forEach(btn=>{
+                btn.classList.remove("active");
+            });
+
+        document
+            .getElementById(id)
+            .classList.add("active");
+    }
+
+    function setPreset(type){
+
+        preset = type;
+
+        switch(type){
+
+            case "uniform":
+                logits = [0,0,0,0,0,0];
+                setActiveButton("uniformBtn");
+                break;
+
+            case "left":
+                logits = [5,4,3,2,1,0];
+                setActiveButton("leftBtn");
+                break;
+
+            case "right":
+                logits = [0,1,2,3,4,5];
+                setActiveButton("rightBtn");
+                break;
+
+            case "exp":
+                logits = [0,1,2,4,6,8];
+                setActiveButton("expBtn");
+                break;
+
+            case "custom":
+                setActiveButton("customBtn");
+                break;
+        }
+
+        renderCustomEditor();
+        triggerChange();
+    }
+
+    function updateLogit(index,value){
+
+        logits[index] = parseFloat(value);
+
+        renderCustomEditor();
+        triggerChange();
+    }
+
+    function renderCustomEditor(){
+
+        const probs =
+            getProbabilities();
+
+        if(preset !== "custom"){
+            let html = `
+                <div class="text-gray-300">
+                    Switch to custom mode to enable vertical distribution sliders.
+                </div>
+                <div class="custom-editor-row mt-6">
+            `;
+
+            for(let i=0;i<6;i++){
+                html += `
+                    <div class="custom-editor-cell">
+                        <span class="custom-editor-label">Face ${i+1}</span>
+                        <span class="custom-editor-value">${(100*probs[i]).toFixed(1)}%</span>
+                    </div>
+                `;
+            }
+
+            html += `</div>`;
+
+            document
+                .getElementById("customEditor")
+                .innerHTML = html;
+            return;
+        }
+
+        let html = `
+            <div class="custom-editor-row">
+        `;
+
+        for(let i=0;i<6;i++){
+            html += `
+                <div class="custom-editor-cell">
+                    <span class="custom-editor-label">Face ${i+1}</span>
+                    <div class="custom-slider">
+                        <input
+                            type="range"
+                            min="-8"
+                            max="8"
+                            step="0.1"
+                            value="${logits[i]}"
+                            class="vertical-range"
+                            oninput="updateLogit(${i},this.value)"
+                        >
+                    </div>
+                    <span class="custom-editor-value">${(100*probs[i]).toFixed(1)}%</span>
+                </div>
+            `;
+        }
+
+        html += `</div>`;
+
+        document
+            .getElementById("customEditor")
+            .innerHTML = html;
+    }
+
+    function getMoments(){
+
+        const p =
+            getProbabilities();
+
+        let mean = 0;
+
+        for(let i=0;i<6;i++){
+
+            mean +=
+                (i+1)*p[i];
+        }
+
+        let variance = 0;
+
+        for(let i=0;i<6;i++){
+
+            variance +=
+                p[i] *
+                Math.pow((i+1)-mean,2);
+        }
+
+        let skewness = 0;
+
+        for(let i=0;i<6;i++){
+
+            skewness +=
+                p[i] *
+                Math.pow((i+1)-mean,3);
+        }
+
+        skewness /= Math.pow(variance,1.5);
+
+        return {
+            mean,
+            variance,
+            skewness
+        };
+    }
+
+    function randn(){
+
+        const u1 = Math.random();
+        const u2 = Math.random();
+
+        return Math.sqrt(
+            -2*Math.log(u1)
+        ) *
+        Math.cos(
+            2*Math.PI*u2
+        );
+    }
+
+    function generateSamples(){
+
+        const n =
+            parseInt(
+                document
+                    .getElementById("nSlider")
+                    .value
+            );
+
+        const {
+            mean,
+            variance
+        } = getMoments();
+
+        const samples = [];
+
+        if(mode === "raw"){
+
+            const mu =
+                n*mean;
+
+            const sigma =
+                Math.sqrt(
+                    n*variance
+                );
+
+            for(let i=0;i<SAMPLE_COUNT;i++){
+
+                samples.push(
+                    mu +
+                    sigma *
+                    randn()
+                );
+            }
+
+        }else{
+
+            for(let i=0;i<SAMPLE_COUNT;i++){
+
+                samples.push(
+                    randn()
+                );
+            }
+        }
+
+        return samples;
+    }
+
+    function buildHistogram(data,bins=60){
+
+        const min =
+            Math.min(...data);
+
+        const max =
+            Math.max(...data);
+
+        if(mode === "raw"){
+            const start = Math.floor(min);
+            const end = Math.ceil(max);
+            const integerBins = end - start + 1;
+            const counts = new Array(integerBins).fill(0);
+
+            for(const x of data){
+                const idx = Math.max(0, Math.min(integerBins - 1, Math.round(x) - start));
+                counts[idx]++;
+            }
+
+            const labels = Array.from({ length: integerBins }, (_, i) => String(start + i));
+            return {
+                labels,
+                counts
+            };
+        }
+
+        const width =
+            (max-min)/bins;
+
+        const counts =
+            new Array(bins).fill(0);
+
+        for(const x of data){
+
+            let idx =
+                Math.floor(
+                    (x-min)/width
+                );
+
+            idx =
+                Math.max(
+                    0,
+                    Math.min(
+                        bins-1,
+                        idx
+                    )
+                );
+
+            counts[idx]++;
+        }
+
+        const labels = [];
+
+        for(let i=0;i<bins;i++){
+
+            labels.push(
+                (
+                    min +
+                    i*width
+                ).toFixed(2)
+            );
+        }
+
+        return {
+            labels,
+            counts
+        };
+    }
+
+    function renderHistogram(values){
+
+        const {
+            labels,
+            counts
+        } = buildHistogram(values);
+
+        if(chart)
+            chart.destroy();
+
+        chart =
+            new Chart(
+                document.getElementById("histogram"),
+                {
+                    type:"bar",
+
+                    data:{
+                        labels:labels,
+
+                        datasets:[
+                            {
+                                label:
+                                    mode==="raw"
+                                    ?
+                                    "Distribution of Sum"
+                                    :
+                                    "Distribution of Standardized Sum",
+
+                                data:counts
+                            }
+                        ]
+                    },
+
+                    options:{
+
+                        animation:false,
+
+                        responsive:true,
+
+                        scales:{
+
+                            x:{
+                                ticks:{
+                                    maxTicksLimit:10
+                                },
+
+                                title:{
+                                    display:true,
+
+                                    text:
+                                        mode==="raw"
+                                        ?
+                                        "Sum of n Dice"
+                                        :
+                                        "Z Score"
+                                }
+                            },
+
+                            y:{
+                                title:{
+                                    display:true,
+                                    text:"Frequency"
+                                }
+                            }
+                        }
+                    }
+                }
+            );
+    }
+
+    function updateStatistics(){
+
+        const n =
+            parseInt(
+                document
+                    .getElementById("nSlider")
+                    .value
+            );
+
+        const {
+            mean,
+            variance,
+            skewness
+        } = getMoments();
+
+        document
+            .getElementById(
+                "distributionStats"
+            )
+            .innerHTML = `
+
+            <div class="stat-card rounded p-3">
+                <div class="text-xs text-gray-400">
+                    Mean
+                </div>
+
+                <div class="font-bold">
+                    ${mean.toFixed(4)}
+                </div>
+            </div>
+
+            <div class="stat-card rounded p-3">
+                <div class="text-xs text-gray-400">
+                    Variance
+                </div>
+
+                <div class="font-bold">
+                    ${variance.toFixed(4)}
+                </div>
+            </div>
+
+            <div class="stat-card rounded p-3 col-span-2">
+                <div class="text-xs text-gray-400">
+                    Skewness
+                </div>
+
+                <div class="font-bold">
+                    ${skewness.toFixed(4)}
+                </div>
+            </div>
+            `;
+
+        const theoreticalMean = mode === "raw" ? (n*mean) : 0;
+        const theoreticalVariance = mode === "raw" ? (n*variance) : 1;
+        const theoreticalStd = Math.sqrt(theoreticalVariance);
+
+        document
+            .getElementById("sumMeanTheory")
+            .innerText =
+            `Theoretical: ${theoreticalMean.toFixed(2)}`;
+
+        document
+            .getElementById("sumVarTheory")
+            .innerText =
+            `Theoretical: ${theoreticalVariance.toFixed(2)}`;
+
+        document
+            .getElementById("sumStdTheory")
+            .innerText =
+            `Theoretical: ${theoreticalStd.toFixed(2)}`;
+
+        document
+            .getElementById("viewText")
+            .innerText =
+            mode === "raw"
+                ? "N(nμ,nσ²)"
+                : "N(0,1)";
+
+        document
+            .getElementById("description")
+            .innerHTML =
+            mode === "raw"
+                ? `CLT approximation to the distribution of the sum of ${n.toLocaleString()} independent dice rolls.`
+                : `Standardized sum: (Sₙ − nμ)/(σ√n) converges to a standard normal distribution.`;
+
+        document
+            .getElementById("simulationStatus")
+            .innerText =
+            "Press Run Simulation to generate the graph and compare against theory.";
+    }
+
+    function runSimulation(){
+        updateStatistics();
+
+        const button = document.getElementById("runSimulation");
+        button.disabled = true;
+        button.innerText = "Running...";
+        document.getElementById("simulationStatus").innerText = "Running simulation...";
+
+        setTimeout(() => {
+            const result = performSimulation();
+
+            renderHistogram(result.samples);
+
+            document.getElementById("sumMean").innerText = result.mean.toFixed(2);
+            document.getElementById("sumVar").innerText = result.variance.toFixed(2);
+            document.getElementById("sumStd").innerText = result.std.toFixed(2);
+
+            document.getElementById("simulationStatus").innerText = `Simulation complete (${result.sampleCount} samples).`;
+            button.disabled = false;
+            button.innerText = "Run Simulation";
+        }, 20);
+    }
+
+    function performSimulation(){
+        const n =
+            parseInt(
+                document
+                    .getElementById("nSlider")
+                    .value
+            );
+
+        const {
+            mean,
+            variance
+        } = getMoments();
+
+        const probs = getProbabilities();
+        const cdf = [];
+        for(let i=0;i<probs.length;i++){
+            cdf[i] = probs[i] + (i > 0 ? cdf[i-1] : 0);
+        }
+
+        const k =
+            parseInt(
+                document
+                    .getElementById("kSlider")
+                    .value
+            );
+
+        const sampleCount = k;
+        const samples = [];
+
+        for(let i=0;i<sampleCount;i++){
+            let sum = 0;
+            for(let j=0;j<n;j++){
+                const r = Math.random();
+                let face = 0;
+                while(r > cdf[face]) face += 1;
+                sum += face + 1;
+            }
+
+            if(mode !== "raw"){
+                sum = (sum - n*mean) / Math.sqrt(n*variance);
+            }
+
+            samples.push(sum);
+        }
+
+        const sampleMean = samples.reduce((acc, x) => acc + x, 0) / samples.length;
+        const sampleVar = samples.reduce((acc, x) => acc + Math.pow(x - sampleMean, 2), 0) / samples.length;
+        const sampleStd = Math.sqrt(sampleVar);
+
+        return {
+            samples,
+            sampleCount,
+            mean: sampleMean,
+            variance: sampleVar,
+            std: sampleStd
+        };
+    }
+
+    function shouldAutoRun(){
+        return document.getElementById("autoRunSimulation").checked;
+    }
+
+    function triggerChange(){
+        if(shouldAutoRun()){
+            runSimulation();
+        } else {
+            updateEverything();
+        }
+    }
+
+    function updateEverything(){
+        updateStatistics();
+    }
+
+    function setMode(newMode){
+
+        mode = newMode;
+
+        if(mode==="raw"){
+
+            rawBtn.className =
+                "flex-1 px-3 py-2 bg-blue-600 text-white rounded";
+
+            stdBtn.className =
+                "flex-1 px-3 py-2 bg-slate-700 text-gray-100 rounded";
+        }
+        else{
+
+            stdBtn.className =
+                "flex-1 px-3 py-2 bg-blue-600 text-white rounded";
+
+            rawBtn.className =
+                "flex-1 px-3 py-2 bg-slate-700 text-gray-100 rounded";
+        }
+
+        triggerChange();
+    }
+
+    document
+        .getElementById("nSlider")
+        .addEventListener(
+            "input",
+            function(){
+
+                document
+                    .getElementById("nValue")
+                    .innerText =
+                    Number(
+                        this.value
+                    ).toLocaleString();
+
+                triggerChange();
+            }
+        );
+
+    document
+        .getElementById("kSlider")
+        .addEventListener(
+            "input",
+            function(){
+
+                document
+                    .getElementById("kValue")
+                    .innerText =
+                    Number(
+                        this.value
+                    ).toLocaleString();
+
+                triggerChange();
+            }
+        );
+
+    document.getElementById("nValue").innerText = Number(document.getElementById("nSlider").value).toLocaleString();
+    document.getElementById("kValue").innerText = Number(document.getElementById("kSlider").value).toLocaleString();
+
+    renderCustomEditor();
+    updateEverything();
+
+    </script>
+{% endblock %}
