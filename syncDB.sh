@@ -4,4 +4,4 @@ rsync -rv --exclude 'venv/' \
           --exclude '*.log' \
           --exclude '.env' \
           --exclude '.git/' \
-        CloudGenie:/var/www/portfolio/db.sqlite3 ./
+        cloudgenie:/var/www/portfolio/db.sqlite3 ./

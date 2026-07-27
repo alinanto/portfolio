@@ -4,4 +4,4 @@ rsync -rv --exclude 'venv/' \
           --exclude '*.log' \
           --exclude '.env' \
           --exclude '.git/' \
-        CloudGenie:/var/www/portfolio/media ./media
+        cloudgenie:/var/www/portfolio/media ./media

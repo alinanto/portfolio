@@ -35,10 +35,10 @@ rsync -rv --exclude 'venv/' \
           --exclude 'staticFiles/' \
           --exclude 'media/' \
           --exclude 'static/' \
-        /home/alin/projects/portfolio/ CloudGenie:/var/www/portfolio/
+        /home/alin/projects/portfolio/ cloudgenie:/var/www/portfolio/
 
 # SSH into remote server and run deployment commands
-ssh CloudGenie << 'EOF'
+ssh cloudgenie << 'EOF'
   cd /var/www/portfolio
   source venv/bin/activate
   pip install -r requirements.txt
